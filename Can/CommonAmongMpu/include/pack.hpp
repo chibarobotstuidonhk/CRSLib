@@ -15,42 +15,44 @@
 
 namespace CRSLib::Can
 {
-    template<class T>
-    concept BeAbleToPackC = sizeof(T) <= can_mtu && std::is_trivially_copyable_v<T>;
+	template<class T>
+	concept BeAbleToPackC = sizeof(T) <= can_mtu && std::is_trivially_copyable_v<T>;
 
-    template<std::endian endian, BeAbleToPackC T>
-    inline void pack(DataField& buffer, const T& value) noexcept
-    {
-        std::memcpy(buffer.data(), &value, sizeof(T));
+	// DataField型へ変換
+	template<std::endian endian, BeAbleToPackC T>
+	inline void pack(DataField& buffer, const T& value) noexcept
+	{
+		std::memcpy(buffer.data(), &value, sizeof(T));
 
-        if constexpr(std::endian::native != endian)
-        {
-            for(unsigned int i = 0; i < sizeof(T) / 2; ++i)
-            {
-                std::swap(buffer[i], buffer[sizeof(T) - 1 - i]);
-            }
-        }
-    }
+		if constexpr(std::endian::native != endian)
+		{
+			for(unsigned int i = 0; i < sizeof(T) / 2; ++i)
+			{
+				std::swap(buffer[i], buffer[sizeof(T) - 1 - i]);
+			}
+		}
+	}
 
-    template<std::endian endian, BeAbleToPackC T>
-    inline T unpack(const DataField& buffer) noexcept
-    {
-        if constexpr(std::endian::native != endian)
-        {
-        	char tmp[can_mtu];
-            for(unsigned int i = 0; i < sizeof(T); ++i)
-            {
-                tmp[i] = buffer[sizeof(T) - 1 - i];
-            }
+	// DataField型から逆変換
+	template<std::endian endian, BeAbleToPackC T>
+	inline T unpack(const DataField& buffer) noexcept
+	{
+		if constexpr(std::endian::native != endian)
+		{
+			char tmp[can_mtu];
+			for(unsigned int i = 0; i < sizeof(T); ++i)
+			{
+				tmp[i] = buffer[sizeof(T) - 1 - i];
+			}
 
-            // 確か大丈夫だったはず(char *からは任意の型にアクセスできるんじゃないっけ？)
-            return *static_cast<T *>(tmp);
-        }
-        else
-        {
-        	return *static_cast<T *>(buffer.data());
-        }
-    }
+			// 確か大丈夫だったはず(char *からは任意の型にアクセスできるんじゃないっけ？)
+			return *static_cast<T *>(tmp);
+		}
+		else
+		{
+			return *static_cast<T *>(buffer.data());
+		}
+	}
 
 
 }

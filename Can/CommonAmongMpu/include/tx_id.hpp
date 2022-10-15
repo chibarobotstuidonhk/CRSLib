@@ -10,7 +10,7 @@
 #include "tx_id_impl_injector.hpp"
 #include "utility.hpp"
 
-namespace CRSLib::Can
+namespace CRSLib::Can::Implement
 {
 	template<OffsetIdsEnumC auto offset_id>
 	struct TxId final
