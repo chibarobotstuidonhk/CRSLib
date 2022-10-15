@@ -44,16 +44,16 @@ namespace CRSLib::Can::STM32f1
 
 		void receive(RxFrame& frame) noexcept
 		{
-			CAN_RxHeaderTypeDef rx_header;
+			CAN_RxHeaderTypeDef rx_header{};
 
 			HAL_CAN_GetRxMessage(hcan, to_underlying(fifo_index), &rx_header, frame.data.data());
 			frame.header =
 			{
-				.id = rx_header.ExtId << (u32)11 | rx_header.StdId,
-				.time_stamp = rx_header.Timestamp,
-				.filter_match_index = rx_header.FilterMatchIndex,
-				.dlc = static_cast<u8>(rx_header.DLC),
-				.rtr = rx_header.RTR == CAN_RTR_REMOTE
+				(rx_header.ExtId << (u32)11) | rx_header.StdId,
+				rx_header.Timestamp,
+				rx_header.FilterMatchIndex,
+				static_cast<u8>(rx_header.DLC),
+				rx_header.RTR == CAN_RTR_REMOTE
 			};
 		}
 
