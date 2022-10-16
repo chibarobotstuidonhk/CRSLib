@@ -10,7 +10,6 @@
 #include "offset_id.hpp"
 #include "rx_unit.hpp"
 #include "abstract_mpu_specific_constraint_check.hpp"
-
 namespace CRSLib::Can
 {
 	namespace Implement::ReceiverImp
@@ -37,6 +36,7 @@ namespace CRSLib::Can
 			while(true)
 			{
 				// フレームを準備
+//				RxFrame rx_frame{{null_id, 0, 0, 0, false}, {}};
 				RxFrame rx_frame{};
 
 				if(!letterbox.empty())
@@ -56,6 +56,7 @@ namespace CRSLib::Can
 				};
 
 				compile_for(for_body_par_rx_unit, CompileForIndex<(size_t)0, sizeof...(OffsetIdsEnums)>{});
+
 			}
 		}
 

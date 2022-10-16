@@ -11,13 +11,15 @@
 
 namespace CRSLib::Can::STM32f1
 {
+	// 初期化しないと上手く動かない。具体的にはletterbox.receive内での代入が最適化で落とされる。
+	// しかし未初期化変数の値読み出しなどはしていないはずだ。なんでだ...？
 	struct RxHeader final
 	{
-		u32 id;
-		u32 time_stamp;
-		u32 filter_match_index;
-		u8 dlc;
-		bool rtr;
+		u32 id{};
+		u32 time_stamp{};
+		u32 filter_match_index{};
+		u8 dlc{};
+		bool rtr{};
 
 		constexpr u32 get_id() const noexcept
 		{
@@ -47,13 +49,14 @@ namespace CRSLib::Can::STM32f1
 			CAN_RxHeaderTypeDef rx_header{};
 
 			HAL_CAN_GetRxMessage(hcan, to_underlying(fifo_index), &rx_header, frame.data.data());
+
 			frame.header =
 			{
-				(rx_header.ExtId << (u32)11) | rx_header.StdId,
-				rx_header.Timestamp,
-				rx_header.FilterMatchIndex,
-				static_cast<u8>(rx_header.DLC),
-				rx_header.RTR == CAN_RTR_REMOTE
+				.id = (rx_header.ExtId << (u32)11) | rx_header.StdId,
+				.time_stamp = rx_header.Timestamp,
+				.filter_match_index = rx_header.FilterMatchIndex,
+				.dlc = static_cast<u8>(rx_header.DLC),
+				.rtr = rx_header.RTR == CAN_RTR_REMOTE
 			};
 		}
 
