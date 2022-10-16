@@ -170,13 +170,11 @@ namespace CRSLib::Can::STM32f1::FilterManager
 
 	inline void dynamic_initialize() noexcept
 	{
-#ifndef stew_SOURCETRAIL
 		[]<u8 ... indices>(std::integer_sequence<u8, indices ...>)
 		{
 			constexpr FrameFeature<FilterWidth::bit32> null_feature{.std_id = max_std_id, .ext_id = max_ext_id};
 			auto null_filter_arg = ConfigFilterArg<FilterWidth::bit32, FilterMode::list>{{null_feature, null_feature}, FifoIndex::fifo0};
 			config_filter_bank(Config::filter_bank_total_size, static_cast<decltype(null_filter_arg)&>(static_cast<void>(indices), null_filter_arg)...);
 		}(std::make_integer_sequence<u8, Config::filter_bank_total_size>());
-#endif
 	}
 }
