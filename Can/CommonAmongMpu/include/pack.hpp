@@ -46,11 +46,11 @@ namespace CRSLib::Can
 			}
 
 			// 確か大丈夫だったはず(char *からは任意の型にアクセスできるんじゃないっけ？)
-			return *static_cast<T *>(tmp);
+			return *reinterpret_cast<const T *>(tmp);
 		}
 		else
 		{
-			return *static_cast<T *>(buffer.data());
+			return *reinterpret_cast<const T *>(buffer.data());
 		}
 	}
 
