@@ -12,9 +12,10 @@ namespace CRSLib
 	template<class Elem>
 	struct SafeCircularQueueEraseN
 	{
-		virtual void push(const Elem& x) noexcept = 0;
-		virtual std::optional<Elem> pop() noexcept = 0;
-		virtual void clear() noexcept = 0;
+		virtual constexpr size_t size() const noexcept = 0; 
+		virtual constexpr void push(const Elem& x) noexcept = 0;
+		virtual constexpr std::optional<Elem> pop() noexcept = 0;
+		virtual constexpr void clear() noexcept = 0;
 	};
 
 	template<class Elem, size_t n>
@@ -26,10 +27,28 @@ namespace CRSLib
 		size_t begin{0};
 		size_t end{n};
 
+		// proof size_t Size{0};
+		// truth
+		// {
+		//		{push(...)} cause Size != n ? Size += 1 : none;
+		//		{pop(...)} cause Size != 0 ? Size -= 1 : none;
+				
+		// }
+
 	public:
-		void push(const Elem& x) noexcept override
+		constexpr size_t size() const noexcept override
 		{
-			if(end == n) end = 0;
+			if(end == n) return 0;
+			else
+			{
+				const auto&& expr = (n + end - begin) % n;
+				return expr ? expr : n;
+			}
+		}
+
+		constexpr void push(const Elem& x) noexcept override
+		{
+			if(end == n) end = begin;
 
 			buffer[end] = x;
 			
@@ -43,8 +62,7 @@ namespace CRSLib
 			}
 		}
 
-		// 割り込み安全にpopする.
-		std::optional<Elem> pop() noexcept
+		constexpr std::optional<Elem> pop() noexcept
 		{
 			if(end == n)
 			{
@@ -64,10 +82,10 @@ namespace CRSLib
 			return ret;
 		}
 
-		// 割り込み安全にキューを空にする.
-		void clear() noexcept
+		constexpr void clear() noexcept
 		{
-			end = begin;
+			begin = 0;
+			end = n;
 		}
 	};
 }
