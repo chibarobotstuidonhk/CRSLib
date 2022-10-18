@@ -21,6 +21,8 @@
 // この中の機能を使う場合には, これ以外からフィルタバンクを弄ってはならない.
 namespace CRSLib::Can::RM0008::FilterManager
 {
+	// filer_match_indexはRM0008参照。config_filter_bankを呼び出す前に値を設定するものではなく、呼び出した後にそのフィルタのFMIが入るものだ。
+	// 大抵の場合、filterとfifoだけ設定すればいい。
 	template<FilterWidth filter_width, FilterMode filter_mode>
 	struct ConfigFilterArg final
 	{
