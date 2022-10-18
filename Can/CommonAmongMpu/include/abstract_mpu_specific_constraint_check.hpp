@@ -5,8 +5,8 @@
 
 namespace CRSLib::Can
 {
-	static_assert(TxFrameC<TxFrame>);
-	static_assert(PillarboxC<Pillarbox, TxFrame>);
-	static_assert(RxFrameC<RxFrame>);
-	static_assert(LetterboxC<Letterbox, RxFrame>);
+	static_assert(TxFrameC<MpuSpecific::TxFrame>);
+	static_assert(PillarboxC<MpuSpecific::Pillarbox, MpuSpecific::TxFrame>);
+	static_assert(RxFrameC<MpuSpecific::RxFrame>);
+	static_assert(LetterboxC<MpuSpecific::Letterbox, MpuSpecific::RxFrame>);
 }

@@ -22,7 +22,7 @@ namespace CRSLib::Can::Implement
 
 	struct TxUnitBase : UnitBase
 	{
-		virtual void transmit(Pillarbox& pillarbox) noexcept = 0;
+		virtual void transmit(MpuSpecific::Pillarbox& pillarbox) noexcept = 0;
 		using UnitBase::UnitBase;
 	};
 
@@ -37,7 +37,7 @@ namespace CRSLib::Can::Implement
 			TxUnitBase{to_underlying(OffsetIdsEnum::n), base_id}
 		{}
 
-		void transmit(Pillarbox& pillarbox) noexcept override
+		void transmit(MpuSpecific::Pillarbox& pillarbox) noexcept override
 		{
 			auto for_body_par_id = [this, &pillarbox]<std::underlying_type_t<OffsetIdsEnum> offset_id, std::underlying_type_t<OffsetIdsEnum> n>(CompileForIndex<offset_id, n>) noexcept
 			{
@@ -56,7 +56,7 @@ namespace CRSLib::Can::Implement
 		}
 
 		template<OffsetIdsEnum offset_id>
-		void push(const TxFrame& tx_frame) noexcept
+		void push(const MpuSpecific::TxFrame& tx_frame) noexcept
 		{
 			std::get<to_underlying(offset_id)>(tx_ids).queue.push(tx_frame);
 		}

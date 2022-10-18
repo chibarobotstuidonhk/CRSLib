@@ -41,7 +41,7 @@ namespace CRSLib::Can
 			bool rtr;
 		};
 
-		constexpr FrameFeature(const u16 std_id = max_std_id, const u32 ext_id = 0, const bool ide = false, const bool rtr = false) noexcept:
+		constexpr FrameFeature(const u16 std_id = max_std_id, const u32 ext_id = max_ext_id, const bool ide = false, const bool rtr = false) noexcept:
 			value{(u16)(std_id << (u16)21 | ext_id << (u32)3 | (u8)ide << 2 | (u8)rtr << 1)}
 		{}
 
@@ -69,7 +69,7 @@ namespace CRSLib::Can
 		};
 
 		// IDEとRTRが32bitと逆！！！！１！！！れ！！！
-		constexpr FrameFeature(const u16 std_id = max_std_id, const bool ide = false, const bool rtr = false, const u8 ext_id_0b111 = 0) noexcept:
+		constexpr FrameFeature(const u16 std_id = max_std_id, const bool ide = false, const bool rtr = false, const u8 ext_id_0b111 = 0b111) noexcept:
 			value{(u16)(std_id << (u16)5 | (u8)rtr << 4 | (u8)ide << 3 | ext_id_0b111)}
 		{}
 

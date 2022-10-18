@@ -16,10 +16,10 @@ namespace CRSLib::Can::Implement
 	struct TxId final
 	{
 		using Impl = TxIdImplInjectorAdaptor<offset_id>;
-		SafeCircularQueue<TxFrame, Impl::queue_size()> queue{};
+		SafeCircularQueue<MpuSpecific::TxFrame, Impl::queue_size()> queue{};
 
 		// Mailboxが満杯になった(あるいはエラーが発生した)らfalse, そうでなければtrueを返す.
-		bool transmit(Pillarbox& pillarbox, const u32 base_id) noexcept
+		bool transmit(MpuSpecific::Pillarbox& pillarbox, const u32 base_id) noexcept
 		{
 			while(true)
 			{

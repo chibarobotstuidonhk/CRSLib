@@ -48,9 +48,9 @@ namespace CRSLib::Can
 	{
 		static constexpr size_t queue_size() noexcept{return 20;}
 
-		void callback(const CRSLib::Can::RxFrame& rx_frame) noexcept
+		void callback(const MpuSpecific::RxFrame& rx_frame) noexcept
 		{
-			 Chibarobo2022::transmitter.template push<0, Chibarobo2022::SampleTx::sample_tx>(TxFrame{{rx_frame.header.dlc}, rx_frame.data});
+			 Chibarobo2022::transmitter.template push<0, Chibarobo2022::SampleTx::sample_tx>(MpuSpecific::TxFrame{{rx_frame.header.dlc}, rx_frame.data});
 		}
 	};
 }

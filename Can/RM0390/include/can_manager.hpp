@@ -6,7 +6,7 @@
 #include "pillarbox.hpp"
 #include "letterbox.hpp"
 
-namespace CRSLib::Can::STM32f1
+namespace CRSLib::Can::RM0390
 {
 	struct CanManager final
 	{

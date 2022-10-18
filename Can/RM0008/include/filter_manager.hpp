@@ -16,10 +16,10 @@
 
 #include "utility.hpp"
 #include "filter.hpp"
-#include "CRSLib/Can/STM32f1/Config/include/config.hpp"
+#include "CRSLib/Can/RM0008/Config/include/config.hpp"
 
 // この中の機能を使う場合には, これ以外からフィルタバンクを弄ってはならない.
-namespace CRSLib::Can::STM32f1::FilterManager
+namespace CRSLib::Can::RM0008::FilterManager
 {
 	template<FilterWidth filter_width, FilterMode filter_mode>
 	struct ConfigFilterArg final
@@ -74,13 +74,58 @@ namespace CRSLib::Can::STM32f1::FilterManager
 		}
 	}
 
-	// 多分bxCAN全体のInitialization ModeとかNomal ModeとかSleep Modeとは独立していると思う.
-	// しかし, STM32f103系のリファレンスに(相当に疑わしいのだが)一部操作は「Nomal Mode前に」行う必要があると書かれていた.
-	// そもそもなんたらMode中にじゃなくNomal Mode前にってなんだよ.
-	// とりあえずHALライブラリのHAL_ConfigFilterやリファレンスの他の記述を見て, bxCANのModeとは独立して実行できると仮定して書く.
-	// あとCAN_FMR内のCAN2SBの変更はきっと何らかの制約が伴う(FINITが立ってないとダメとか)と思うのだけど, これの説明は~~どこにもない.~~分散してたけど書いてあった.
-	// 
-	// FINITを立てないと変更ができないレジスタの変更を行う. 
+	template<u8 index, FilterWidth filter_width, FilterMode filter_mode>
+	void per_filter_arg(CAN_TypeDef *const bxcan, ConfigFilterArg<filter_width, filter_mode>& filter_arg) noexcept
+	{
+		constexpr u32 bit_position = (u32)1 << index;
+
+		// change filter content.
+		u32 tmp_buffer[2];
+		std::memcpy(tmp_buffer, &filter_arg.filter, 8);
+		bxcan->sFilterRegister[index].FR1 = tmp_buffer[0];
+		bxcan->sFilterRegister[index].FR2 = tmp_buffer[1];
+
+		// change scale
+		if constexpr(filter_width == FilterWidth::bit16)
+		{
+			clear_bit(bxcan->FS1R, bit_position);
+		}
+		else
+		{
+			set_bit(bxcan->FS1R, bit_position);
+		}
+
+		// change mode
+		if constexpr(filter_mode == FilterMode::mask)
+		{
+			clear_bit(bxcan->FM1R, bit_position);
+		}
+		else
+		{
+			set_bit(bxcan->FM1R, bit_position);
+		}
+
+		// change fifo
+		if(filter_arg.fifo == FifoIndex::fifo0)
+		{
+			clear_bit(bxcan->FFA1R, bit_position);
+		}
+		else
+		{
+			set_bit(bxcan->FFA1R, bit_position);
+		}
+
+		// change active
+		if(filter_arg.activate)
+		{
+			set_bit(bxcan->FA1R, bit_position);
+		}
+		else
+		{
+			clear_bit(bxcan->FA1R, bit_position);
+		}
+	}
+
 	template<FilterWidth ... filter_widthes, FilterMode ... filter_modes>
 	void config_filter_bank(const u8 can2_start, ConfigFilterArg<filter_widthes, filter_modes>& ... filter_args)
 	requires (sizeof...(filter_args) <= Config::filter_bank_total_size)
@@ -94,68 +139,12 @@ namespace CRSLib::Can::STM32f1::FilterManager
 		set_bit(bxcan1->FMR, CAN_FMR_FINIT);
 
 		// change CAN2SB (in CAN1)
-		if constexpr(Config::use_dual_can)
+		clear_bit(bxcan1->FMR, CAN_FMR_CAN2SB);
+		set_bit(bxcan1->FMR, can2_start << CAN_FMR_CAN2SB_Pos);
+
+		[bxcan1]<u8 ... indices>(std::integer_sequence<u8, indices ...>, std::same_as<ConfigFilterArg<filter_widthes, filter_modes>> auto& ... filter_args)
 		{
-			clear_bit(bxcan1->FMR, CAN_FMR_CAN2SB);
-			set_bit(bxcan1->FMR, can2_start << CAN_FMR_CAN2SB_Pos);
-		}
-
-		constexpr auto per_filter_arg = []<u8 index, FilterWidth filter_width, FilterMode filter_mode>(ConfigFilterArg<filter_width, filter_mode>& filter_arg)
-		{
-			CAN_TypeDef *const bxcan1 = (CAN_TypeDef *)can_instance(CanX::can1);
-
-			constexpr u32 bit_position = (u32)1 << index;
-
-			// change filter content.
-			u32 tmp_buffer[2];
-			std::memcpy(tmp_buffer, &filter_arg.filter, 8);
-			bxcan1->sFilterRegister[index].FR1 = tmp_buffer[0];
-			bxcan1->sFilterRegister[index].FR2 = tmp_buffer[1];
-
-			// change scale
-			if constexpr(filter_width == FilterWidth::bit16)
-			{
-				clear_bit(bxcan1->FS1R, bit_position);
-			}
-			else
-			{
-				set_bit(bxcan1->FS1R, bit_position);
-			}
-
-			// change mode
-			if constexpr(filter_mode == FilterMode::mask)
-			{
-				clear_bit(bxcan1->FM1R, bit_position);
-			}
-			else
-			{
-				set_bit(bxcan1->FM1R, bit_position);
-			}
-
-			// change fifo
-			if(filter_arg.fifo == FifoIndex::fifo0)
-			{
-				clear_bit(bxcan1->FFA1R, bit_position);
-			}
-			else
-			{
-				set_bit(bxcan1->FFA1R, bit_position);
-			}
-
-			// change active
-			if(filter_arg.activate)
-			{
-				set_bit(bxcan1->FA1R, bit_position);
-			}
-			else
-			{
-				clear_bit(bxcan1->FA1R, bit_position);
-			}
-		};
-
-		[per_filter_arg]<u8 ... indices>(std::integer_sequence<u8, indices ...>, std::same_as<ConfigFilterArg<filter_widthes, filter_modes>> auto& ... filter_args)
-		{
-			(per_filter_arg.template operator()<indices>(filter_args), ...);
+			(per_filter_arg<indices>(bxcan1, filter_args), ...);
 		}(std::make_integer_sequence<u8, sizeof...(filter_widthes)>(), filter_args ...);
 
 		// clear FINIT
@@ -164,8 +153,9 @@ namespace CRSLib::Can::STM32f1::FilterManager
 
 	inline void change_filter_activeness(const u32 index, const bool activate) noexcept
 	{
-		clear_bit(((CAN_TypeDef *)can_instance(CanX::can1))->FA1R, (u32)1 << index);
-		set_bit(((CAN_TypeDef *)can_instance(CanX::can1))->FA1R, (u32)activate << index);
+		const auto bxcan1 = (CAN_TypeDef *)can_instance(CanX::can1);
+		clear_bit(bxcan1->FA1R, (u32)1 << index);
+		set_bit(bxcan1->FA1R, (u32)activate << index);
 	}
 
 	inline void dynamic_initialize() noexcept

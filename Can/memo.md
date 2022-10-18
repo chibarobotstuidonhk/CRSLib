@@ -13,7 +13,7 @@
 
 ## 概要
 ST社のマイコンにおけるCAN通信を管理する機能。  
-シリーズ固有のコードは該当のディレクトリにある。(STM32f1など)  
+シリーズ固有のコードは該当のマイコンのリファレンス名のディレクトリにある。(RM0008など)  
 シリーズ共通のコードはCommonAmongMpuにある。  
 シリーズ固有のコードは、全てのシリーズに対応するのが困難であるため必要なものが増えた段階で追加してほしい。  
 
@@ -33,12 +33,12 @@ ST社のマイコンにおけるCAN通信を管理する機能。
   このとき、CRSLib/Can/Config/include/config.hppも編集すること。
 3. なんかバグったりした、コードに疑問を持った、コードに誤りを見つけた、提案があればメンテしてる人に連絡を入れる。
 
-## シリーズ固有のコード(STM32f1など)
+## シリーズ固有のコード(RM0008など)
 CAN通信を行うための最低限の機能をまとめたもの。
 
 CAN通信を行うためにはシリーズ固有の処理を行う必要がある。DualCANがあるものもあれば、無いものもある。受信バッファが2つのものもあれば、1つしかないものもある。そういう違いに対応するコードが書かれている。また、より上位の機能のためにシリーズの違いを抽象化したインターフェースを有する。
 
-### CRSLib::Can::\<mpu_model_number\>::Pillarbox
+### CRSLib::Can::\<mpu_reference_number\>::Pillarbox
 Pillarboxは柱状ポストを意味する。そのマイコンがCAN busに情報を送り出すためのクラス。
 ```C++
 template<class T, class TxFrame>
@@ -52,7 +52,7 @@ concept PillarboxC = TxFrameC<TxFrame> && requires(T pillarbox, const u32 id, Tx
 };
 ```
 
-### CRSLib::Can::\<mpu_model_number\>::TxFrame
+### CRSLib::Can::\<mpu_reference_number\>::TxFrame
 送信に用いるフレーム。
 ```C++
 template<class T>
@@ -68,7 +68,7 @@ concept TxFrameC = requires(T tx_frame)
 };
 ```
 
-### CRSLib::Can::\<mpu_model_number\>::Letterbox
+### CRSLib::Can::\<mpu_reference_number\>::Letterbox
 Letterboxは郵便物を入れる箱を意味する。Pillarboxに対して「郵便受け」というようなニュアンスで命名した。そのマイコンがCAN busから情報を受け取るためのクラス。
 ```C++
 template<class T, class RxFrame>
@@ -81,7 +81,7 @@ concept LetterboxC = RxFrameC<RxFrame> && requires(T letterbox, RxFrame rx_frame
 };
 ```
 
-### CRSLib::Can::\<mpu_model_number\>::RxFrame
+### CRSLib::Can::\<mpu_reference_number\>::RxFrame
 受信に用いるフレーム。
 ```C++
 template<class T>
@@ -100,13 +100,13 @@ concept RxFrameC = requires(T rx_frame)
 これらのクラスは同じ名前でCRSLib::Canに型エイリアスとして宣言される必要がある。  
 そのコードはシリーズ固有のディレクトリそれぞれの中の、```abstract_mpu_specific_iplement.hpp```に記述されている必要がある。
 ```C++
-// 例(CRSLib/Can/STM32f1/abstract_mpu_specific_iplement.hpp)
+// 例(CRSLib/Can/RM0008/abstract_mpu_specific_iplement.hpp)
 namespace CRSLib::Can
 {
-	using TxFrame = STM32f1::TxFrame;
-	using Pillarbox = STM32f1::Pillarbox;
-	using RxFrame = STM32f1::RxFrame;
-	using Letterbox = STM32f1::Letterbox;
+	using TxFrame = RM0008::TxFrame;
+	using Pillarbox = RM0008::Pillarbox;
+	using RxFrame = RM0008::RxFrame;
+	using Letterbox = RM0008::Letterbox;
 }
 ```
 
@@ -114,7 +114,7 @@ namespace CRSLib::Can
 ```C++
 #pragma once
 // 自分の使いたいシリーズのabstract_mpu_specific_implement.hppをインクルードすること。
-#include <CRSLib/Can/STM32f1/abstract_mpu_specific_implement.hpp>
+#include <CRSLib/Can/RM0008/abstract_mpu_specific_implement.hpp>
 
 ```
 
@@ -125,7 +125,7 @@ idごとに格納するキューのサイズを指定したり、コールバッ
 CRSLib:Executorを使っている。これにより割り込みの優先度を制御するため、安全に送受信を行いやすくなっている。
 
 ### 使い方
-CRSLib/Can/STM32f1内のsampleを参照。
+CRSLib/Can/RM0008内のsampleを参照。
 
 まずコードを書く前に、各ヘッダに導入されている名前のうち```CRSLib:: ~ ::Implement```名前空間に含まれていない名前を確認してほしい。  
 - クラス名なら、そのpublicなメンバを軽く確認してほしい。

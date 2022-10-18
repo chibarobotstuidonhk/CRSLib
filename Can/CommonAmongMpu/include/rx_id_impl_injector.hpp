@@ -15,23 +15,23 @@ namespace CRSLib::Can
 	{
 		template<class T>
 		concept HasAnyCallback =
-			requires(RxFrame rx_frame)
+			requires(MpuSpecific::RxFrame rx_frame)
 			{
 				T::callback(rx_frame);
 			} ||
-			requires(RxFrame rx_frame, typename T::CallbackArg * arg)
+			requires(MpuSpecific::RxFrame rx_frame, typename T::CallbackArg * arg)
 			{
 				T::callback(rx_frame, arg);
 			};
 
 		template<class T>
-		concept HasNonMemberCallback = requires(RxFrame rx_frame)
+		concept HasNonMemberCallback = requires(MpuSpecific::RxFrame rx_frame)
 		{
 			{T::callback(rx_frame)} noexcept;
 		};
 
 		template<class T>
-		concept HasMemberCallback = requires(RxFrame rx_frame, typename T::CallbackArg * arg)
+		concept HasMemberCallback = requires(MpuSpecific::RxFrame rx_frame, typename T::CallbackArg * arg)
 		{
 			{T::callback(rx_frame, arg)} noexcept;
 		};

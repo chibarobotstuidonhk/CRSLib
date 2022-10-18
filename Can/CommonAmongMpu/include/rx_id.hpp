@@ -23,7 +23,7 @@ namespace CRSLib::Can::Implement
 	struct RxId<offset_id> final
 	{
 		using Impl = RxIdImplAdaptor<offset_id>;
-		SafeCircularQueue<RxFrame, Impl::queue_size()> queue{};
+		SafeCircularQueue<MpuSpecific::RxFrame, Impl::queue_size()> queue{};
 
 		RxId() = default;
 	};
@@ -33,7 +33,7 @@ namespace CRSLib::Can::Implement
 	struct RxId<offset_id> final : Executable<void () noexcept>
 	{
 		using Impl = RxIdImplAdaptor<offset_id>;
-		SafeCircularQueue<RxFrame, Impl::queue_size> queue{};
+		SafeCircularQueue<MpuSpecific::RxFrame, Impl::queue_size> queue{};
 		Impl::CallbackArg * arg;
 
 		constexpr RxId(Impl::CallbackArg *const arg) noexcept:
@@ -61,7 +61,7 @@ namespace CRSLib::Can::Implement
 	struct RxId<offset_id> final : Executable<void () noexcept>
 	{
 		using Impl = RxIdImplAdaptor<offset_id>;
-		SafeCircularQueue<RxFrame, Impl::queue_size> queue{};
+		SafeCircularQueue<MpuSpecific::RxFrame, Impl::queue_size> queue{};
 
 		bool call_once() noexcept override
 		{

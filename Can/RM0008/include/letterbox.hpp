@@ -9,7 +9,7 @@
 
 #include "utility.hpp"
 
-namespace CRSLib::Can::STM32f1
+namespace CRSLib::Can::RM0008
 {
 	// 初期化しないと上手く動かない。具体的にはletterbox.receive内での代入が最適化で落とされる。
 	// しかし未初期化変数の値読み出しなどはしていないはずだ。なんでだ...？

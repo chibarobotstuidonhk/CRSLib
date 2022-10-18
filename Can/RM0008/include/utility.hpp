@@ -1,10 +1,9 @@
 #pragma once
 
-namespace CRSLib::Can::STM32f1
+namespace CRSLib::Can::RM0008
 {
 	enum class CanX
 	{
-		single_can,
 		can1,
 		can2
 	};
@@ -32,7 +31,6 @@ namespace CRSLib::Can::STM32f1
 	{
 		switch(can_x)
 		{
-		case CanX::single_can:
 		case CanX::can1:
 			return static_cast<i_ptr>(0x4000'6400);
 		case CanX::can2:

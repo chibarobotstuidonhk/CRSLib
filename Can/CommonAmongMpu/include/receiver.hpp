@@ -31,13 +31,12 @@ namespace CRSLib::Can
 
 		// 各rx_unitsに受信したフレームを振り分け, executorにコールバックをpushする.
 		template<size_t queue_size>
-		void receive(Letterbox& letterbox, Executor<void () noexcept, queue_size>& executor) noexcept
+		void receive(MpuSpecific::Letterbox& letterbox, Executor<void () noexcept, queue_size>& executor) noexcept
 		{
 			while(true)
 			{
 				// フレームを準備
-//				RxFrame rx_frame{{null_id, 0, 0, 0, false}, {}};
-				RxFrame rx_frame{};
+				MpuSpecific::RxFrame rx_frame{};
 
 				if(!letterbox.empty())
 				{

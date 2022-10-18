@@ -4,7 +4,7 @@
 
 #include "utility.hpp"
 
-namespace CRSLib::Can::STM32f1::Implement
+namespace CRSLib::Can::RM0390::Implement
 {
 	CAN_HandleTypeDef crslib_default_hcan(CAN_TypeDef * instance, Bitrate bitrate = Bitrate::rate1M) noexcept
 	{
@@ -53,7 +53,7 @@ namespace CRSLib::Can::STM32f1::Implement
 
 			// この2つはグローバルな状態を管理するためのもの. なぜ同じ引数にまとめてしまったのか.
 			
-			// HALライブラリの捉え方によるbxCANの状態. 微妙にSTM32f1系のリファレンスとは状態の捉え方が違う.
+			// HALライブラリの捉え方によるbxCANの状態. 微妙にRM0390系のリファレンスとは状態の捉え方が違う.
 			.State = HAL_CAN_STATE_READY,
 			// エラーコード.
 			.ErrorCode = HAL_CAN_ERROR_NONE

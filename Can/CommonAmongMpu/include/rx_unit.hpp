@@ -45,7 +45,7 @@ namespace CRSLib::Can::Implement
 
 	public:
 		template<size_t queue_size>
-		void receive(const RxFrame& rx_frame, Executor<void () noexcept, queue_size>& executor) noexcept
+		void receive(const MpuSpecific::RxFrame& rx_frame, Executor<void () noexcept, queue_size>& executor) noexcept
 		{
 			auto for_body_par_offset_id = [this, &rx_frame, &executor]
 			<std::underlying_type_t<OffsetIdsEnum> offset_id, std::underlying_type_t<OffsetIdsEnum> n>

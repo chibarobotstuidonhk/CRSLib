@@ -41,7 +41,7 @@ namespace CRSLib::Can
 		}
 
 	public:
-		void transmit(Pillarbox& pillarbox) noexcept
+		void transmit(MpuSpecific::Pillarbox& pillarbox) noexcept
 		{
 			using namespace IntegerLiterals;
 
@@ -65,13 +65,13 @@ namespace CRSLib::Can
 		}
 
 		template<size_t index, OffsetIdsEnumC auto offset_id>
-		void push(const TxFrame& tx_frame) noexcept
+		void push(const MpuSpecific::TxFrame& tx_frame) noexcept
 		{
 			std::get<index>(tx_units).template push<offset_id>(tx_frame);
 		}
 
 		template<size_t index, OffsetIdsEnumC auto offset_id>
-		void clear(const TxFrame& tx_frame) noexcept
+		void clear(const MpuSpecific::TxFrame& tx_frame) noexcept
 		{
 			std::get<index>(tx_units).template clear<offset_id>(tx_frame);
 		}
