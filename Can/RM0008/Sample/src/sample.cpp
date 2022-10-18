@@ -8,7 +8,7 @@ using namespace CRSLib::Can::RM0008;
 
 extern "C"
 {
-	int main_cpp(CAN_HandleTypeDef *const hcan)
+	void main_cpp(CAN_HandleTypeDef *const hcan)
 	{
 		CanManager can_manager{hcan};
 

@@ -1,5 +1,9 @@
 #pragma once
 
+// プリスケーラが回路に大きく依存するため使用禁止。
+// 説明専用とする。
+#error "This file is for explanation only."
+
 #include "hal_can.hpp"
 
 #include "utility.hpp"
@@ -20,12 +24,13 @@ namespace CRSLib::Can::RM0008::Implement
 			.Init =
 			CAN_InitTypeDef
 			{
-				// わからん.
+				// RM0008のFig. 234あたり参照. APB1が36ならばこれでよい.
 				.Prescaler = HAL_RCC_GetPCLK1Freq() / 18 / to_underlying(bitrate),
+				
 				// Test Modeに変更することもできる.
 				.Mode = CAN_MODE_NORMAL,
 
-				// わからん.
+				// RM0008のFig. 234あたり参照. APB1が36ならばこれでよい.
 				//Sample-Point at: (1+15)/(1+15+2)=88.9% where CAN open states "The location of the sample point must be as close as possible to 87,5 % of the bit time."
 				.SyncJumpWidth = CAN_SJW_1TQ,
 				.TimeSeg1 = CAN_BS1_15TQ,
