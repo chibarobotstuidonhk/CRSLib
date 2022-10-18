@@ -155,7 +155,7 @@ namespace CRSLib::Can::RM0390::FilterManager
 	void config_filter_bank(ConfigFilterArg<filter_widthes, filter_modes>& ... filter_args)
 	requires (sizeof...(filter_args) <= Config::filter_bank_total_size)
 	{
-		config_filter_bank(28, filter_args);
+		config_filter_bank(28, filter_args ...);
 	}
 
 	inline void change_filter_activeness(const u32 index, const bool activate) noexcept
