@@ -3,6 +3,8 @@
 #include <array>
 
 #include <CRSLib/include/std_int.hpp>
+#include <CRSLib/Can/CommonAmongMpu/include/utility.hpp>
+
 
 namespace CRSLib::Can
 {
@@ -42,12 +44,12 @@ namespace CRSLib::Can
 		};
 
 		constexpr FrameFeature(const u16 std_id = max_std_id, const u32 ext_id = max_ext_id, const bool ide = false, const bool rtr = false) noexcept:
-			value{(u16)(std_id << (u16)21 | ext_id << (u32)3 | (u8)ide << 2 | (u8)rtr << 1)}
+			value{(u32)(std_id << (u16)21 | ext_id << (u32)3 | (u8)ide << 2 | (u8)rtr << 1)}
 		{}
 
 		constexpr UnPack unpack() const noexcept
 		{
-			return {.std_id = (u16)(value >> (u32)21), .ext_id = value >> (u32)3 & max_ext_id, .ide = (bool)(value >> (u32)2 & 0b1), .rtr = bool(value >> (u32)1 & 0b1)};
+			return {.std_id = (u32)(value >> (u32)21), .ext_id = value >> (u32)3 & max_ext_id, .ide = (bool)(value >> (u32)2 & 0b1), .rtr = bool(value >> (u32)1 & 0b1)};
 		}
 
 		friend bool operator==(const FrameFeature&, const FrameFeature&) = default;

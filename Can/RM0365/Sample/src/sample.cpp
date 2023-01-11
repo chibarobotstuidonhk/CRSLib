@@ -1,11 +1,11 @@
-#include <CRSLib/Can/RM0008/include/can_manager.hpp>
-#include <CRSLib/Can/RM0008/include/filter_manager.hpp>
-#include <CRSLib/Can/RM0008/include/letterbox.hpp>
-#include <CRSLib/Can/RM0008/include/pillarbox.hpp>
+#include <CRSLib/Can/RM0365/include/can_manager.hpp>
+#include <CRSLib/Can/RM0365/include/filter_manager.hpp>
+#include <CRSLib/Can/RM0365/include/letterbox.hpp>
+#include <CRSLib/Can/RM0365/include/pillarbox.hpp>
 
 using namespace CRSLib::IntegerTypes;
 using namespace CRSLib::Can;
-using namespace CRSLib::Can::RM0008;
+using namespace CRSLib::Can::RM0365;
 
 extern "C"
 {
