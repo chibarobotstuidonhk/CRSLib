@@ -48,7 +48,7 @@ namespace CRSLib::Can
 
 		constexpr UnPack unpack() const noexcept
 		{
-			return {.std_id = (u32)(value >> (u32)21), .ext_id = value >> (u32)3 & max_ext_id, .ide = (bool)(value >> (u32)2 & 0b1), .rtr = (bool)(value >> (u32)1 & 0b1)};
+			return {.std_id = (u32)(value >> (u32)21), .ext_id = value >> (u32)3 & max_ext_id, .ide = (bool)(value >> (u32)2 & 0b1), .rtr = bool(value >> (u32)1 & 0b1)};
 		}
 
 		friend bool operator==(const FrameFeature&, const FrameFeature&) = default;
