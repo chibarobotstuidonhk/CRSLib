@@ -23,31 +23,10 @@ namespace CRSLib
 		using size_t = std::size_t;
 		using nullptr_t = std::nullptr_t;
 		using max_align_t = std::max_align_t;
+#if __cplusplus >= 201703L
 		using byte = std::byte;
+#endif
 	}
 
 	using namespace IntegerTypes;
-
-	namespace IntegerLiterals
-	{
-#define Stew_define_integer_literals(type)\
-		inline constexpr type operator"" _##type(unsigned long long x) noexcept\
-		{\
-			return x;\
-		}
-
-		Stew_define_integer_literals(i8)
-		Stew_define_integer_literals(u8)
-		Stew_define_integer_literals(i16)
-		Stew_define_integer_literals(u16)
-		Stew_define_integer_literals(i32)
-		Stew_define_integer_literals(u32)
-		Stew_define_integer_literals(i64)
-		Stew_define_integer_literals(u64)
-		Stew_define_integer_literals(i_ptr)
-		Stew_define_integer_literals(ptrdiff_t)
-		Stew_define_integer_literals(size_t)
-
-#undef Stew_define_integer_literals
-	}
 }
