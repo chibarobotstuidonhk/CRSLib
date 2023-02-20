@@ -30,3 +30,8 @@ namespace CRSLib
 
 	using namespace IntegerTypes;
 }
+
+namespace crs_lib
+{
+	using namespace CRSLib::IntegerTypes;
+}

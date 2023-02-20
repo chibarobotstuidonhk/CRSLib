@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <CRSLib/include/std_int.hpp>
+#include <CRSLib/include/std_type.hpp>
 
 namespace CRSLib
 {
